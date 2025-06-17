@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Genesis Allocation Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #101010;
+      color: #e0e0e0;
+      padding: 30px;
+    }
+    h2, h3 {
+      color: #ffffff;
+    }
+    label {
+      margin-right: 10px;
+    }
+    input {
+      padding: 6px;
+      font-size: 16px;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #1e1e1e;
+      color: #fff;
+      margin-right: 10px;
+    }
+    button {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #444;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #333;
+    }
+    th {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+    td {
+      background-color: #181818;
+      color: #ccc;
+    }
+    .note {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Genesis Allocation Calculator</h2>
+
+<label for="pointsInput">Points You Bid:</label>
+<input type="number" id="pointsInput" value="1000" oninput="updateTable()">
+
+<table>
+  <thead>
+    <tr>
+      <th>Total Points Bid</th>
+      <th>$1M FDV</th>
+      <th>$2M FDV</th>
+      <th>$3M FDV</th>
+      <th>$4M FDV</th>
+      <th>$5M FDV</th>
+      <th>$10M FDV</th>
+      <th>$20M FDV</th>
+      <th>$25M FDV</th>
+      <th>$50M FDV</th>
+      <th>$100M FDV</th>
+      <th>$300M FDV</th>
+      <th>$500M FDV</th>
+    </tr>
+  </thead>
+  <tbody id="calcBody"></tbody>
+</table>
+
+<div class="note">
+  <strong>Calculation:</strong> (Points You Bid / Total Points Bid) × (Agent FDV × 0.375)
+</div>
+
+<hr style="margin: 40px 0; border-color: #444;">
+
+<h3>Manual Genesis Allocation Calculator</h3>
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; margin-bottom: 20px;">
+  <label for="manualPoints">Points You Bid:</label>
+  <input type="number" id="manualPoints" value="1000">
+
+  <label for="manualTotalPoints">Total Points Bid:</label>
+  <input type="number" id="manualTotalPoints" value="100000000">
+
+  <label for="manualFDV">Agent FDV:</label>
+  <input type="number" id="manualFDV" value="100000000">
+
+  <button onclick="calculateManual()">Calculate</button>
+</div>
+
+<p id="manualResult" style="font-size: 18px; color: #0f0;"></p>
+
+<script>
+  const totalPointsBids = [
+    25000000, 50000000, 100000000, 250000000, 550000000, 700000000,
+    850000000, 1000000000, 1150000000, 1300000000, 1450000000
+  ];
+
+  const agentFDVs = [
+    1000000, 2000000, 3000000, 4000000, 5000000,
+    10000000, 20000000, 25000000, 50000000,
+    100000000, 300000000, 500000000
+  ];
+
+  function formatUSD(value) {
+    return "$" + Math.round(value).toLocaleString();
+  }
+
+  function updateTable() {
+    const points = parseFloat(document.getElementById("pointsInput").value || 0);
+    const tbody = document.getElementById("calcBody");
+    tbody.innerHTML = "";
+
+    const fdvMultiplier = 0.375;
+
+    totalPointsBids.forEach(totalPoints => {
+      const row = document.createElement("tr");
+      const totalCell = document.createElement("td");
+      totalCell.textContent = totalPoints.toLocaleString();
+      row.appendChild(totalCell);
+
+      agentFDVs.forEach(fdv => {
+        const alloc = (points / totalPoints) * (fdv * fdvMultiplier);
+        const cell = document.createElement("td");
+        cell.textContent = formatUSD(alloc);
+        row.appendChild(cell);
+      });
+
+      tbody.appendChild(row);
+    });
+  }
+
+  function calculateManual() {
+    const points = parseFloat(document.getElementById("manualPoints").value || 0);
+    const totalPoints = parseFloat(document.getElementById("manualTotalPoints").value || 1);
+    const fdv = parseFloat(document.getElementById("manualFDV").value || 0);
+    const allocation = (points / totalPoints) * (fdv * 0.375);
+    document.getElementById("manualResult").textContent =
+      "Estimated $ Allocation: " + formatUSD(allocation);
+  }
+
+  updateTable();
+</script>
+
+<footer style="
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #aaa;
+">
+  Made by <a href="https://x.com/luffysuui" target="_blank" style="color: #0f0; text-decoration: none;">
+    @luffysuui
+  </a>
+</footer>
+
+</body>
+</html>
